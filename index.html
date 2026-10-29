@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday cindooo</title>
+
+  <!-- Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-black:#000;
+      --panel:#181818;
+      --panel-2:#1a1a1a;
+      --muted:#bdbdbd;
+      --accent:#1ed760;
+      --soft-transition:200ms;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:'Poppins',sans-serif; background:var(--bg-black); color:#fff; -webkit-font-smoothing:antialiased}
+
+    /* ============ HERO (Halaman 1) ============ */
+    .hero {
+      position:relative;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      align-items:flex-start;
+      padding:110px 6% 80px 6%;
+      background: center center/cover no-repeat url('embg.jpeg');
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.35);
+      z-index:0;
+    }
+    .hero .content {
+      position:relative; z-index:1;
+      max-width:900px;
+      width:100%;
+      color:#fff;
+      opacity:0;
+      transform:translateY(12px);
+      transition:opacity 700ms ease, transform 700ms ease;
+    }
+    .hero .content.visible{ opacity:1; transform:none; }
+
+    .hero h1{
+      font-size:48px; line-height:1.05; margin:0 0 14px 0; font-weight:700;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    }
+    .hero p{ margin:0 0 22px 0; color:var(--muted); font-weight:300; max-width:680px; font-size:16px}
+    .hero .controls { display:flex; gap:12px; align-items:center }
+
+    .btn {
+      background:#fff; color:#000; border-radius:10px; padding:10px 18px; border:0; cursor:pointer;
+      font-weight:600; transition: transform var(--soft-transition), opacity var(--soft-transition);
+    }
+    .btn.secondary{ background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.06) }
+
+    .btn:active{ transform:scale(.98) }
+    .btn:hover{ opacity:.95 }
+
+    /* ============ CURVED DIVIDER (Half-circle) ============ */
+    .divider-wrap{ position:relative; height:120px; display:block; z-index:2; margin-top:40px; }
+    .divider-svg{
+      width:100%; height:100%; display:block;
+      transition: transform 450ms cubic-bezier(.22,.9,.36,1);
+      /* initial: curve pointing down (like bowl). We'll flip on scroll direction */
+    }
+    /* flip by scaleY(-1) when appropriate via JS */
+
+    /* ============ MUSIC SECTION (Halaman 2) ============ */
+    .music-section{
+      background:var(--bg-black);
+      color:#fff;
+      padding:28px 20px;
+      display:flex;
+      gap:20px;
+      align-items:flex-start;
+      min-height:calc(100vh - 40px);
+    }
+
+    /* Sidebar (ramping) */
+    .sidebar{
+      width:86px; /* slim */
+      min-width:86px;
+      background:transparent;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+      padding-top:18px;
+    }
+    .sb-icon{
+      width:46px; height:46px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--muted); cursor:pointer; transition:all 180ms;
+    }
+    .sb-icon:hover{ background:rgba(255,255,255,0.03); color:#fff; transform:translateY(-3px) }
+    .sb-label{ font-size:11px; color:var(--muted); text-align:center; margin-top:4px; display:none }
+
+    /* middle main content */
+    .main {
+      flex:1; padding:6px 20px 40px 20px; max-width:1200px;
+      opacity:0; transform:translateY(10px); transition:opacity 600ms ease, transform 600ms ease;
+    }
+    .main.visible{ opacity:1; transform:none }
+
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px;
+    }
+    .search{
+      background:#111; padding:8px 12px; border-radius:20px; color:var(--muted); width:60%;
+    }
+    .top-actions{ display:flex; gap:10px; align-items:center }
+    .pill{ background:var(--accent); color:#000; padding:8px 12px; border-radius:20px; font-weight:600; font-size:13px }
+
+    /* songs grid */
+    .songs-grid{
+      display:flex; gap:18px; flex-wrap:wrap;
+      margin-bottom:36px;
+    }
+    .song{
+      background:var(--panel);
+      border-radius:12px; padding:14px; width:calc(33% - 12px);
+      min-width:190px; display:flex; flex-direction:column; align-items:center; gap:8px;
+      transition:transform 220ms ease, box-shadow 220ms ease;
+    }
+    .song:hover{ transform:translateY(-6px); box-shadow:0 8px 30px rgba(0,0,0,0.5) }
+    .song img{ width:110px; height:110px; object-fit:cover; border-radius:10px }
+    .song h4{ margin:8px 0 0 0; font-size:15px; text-align:center }
+    .song small{ color:var(--muted); display:block; margin-bottom:6px; font-size:12px }
+
+    /* custom compact audio controls */
+    .controls-row{ width:100%; display:flex; align-items:center; gap:8px; justify-content:center }
+    .play-btn{
+      width:36px; height:36px; border-radius:8px; border:0; background:var(--accent); color:#000; font-weight:700;
+      display:flex; align-items:center; justify-content:center; cursor:pointer;
+    }
+    .play-btn.paused{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted) }
+    .progress{
+      height:6px; background:rgba(255,255,255,0.06); border-radius:6px; flex:1; overflow:hidden;
+    }
+    .progress > i{ display:block; height:100%; width:0%; background:var(--accent) }
+
+    /* library in sidebar - compact cards */
+    .library{
+      margin-top:8px; display:flex; flex-direction:column; gap:10px; align-items:center; width:100%;
+    }
+    .lib-item{
+      background:var(--panel-2); width:72px; border-radius:10px; padding:8px; display:flex; flex-direction:column; align-items:center; gap:8px;
+    }
+    .lib-item img{ width:48px; height:48px; object-fit:cover; border-radius:8px }
+
+    /* moments area */
+    .moments{
+      margin-top:30px;
+      background:var(--panel);
+      border-radius:18px; padding:22px;
+      opacity:0; transform:translateY(10px); transition:opacity 600ms ease, transform 600ms ease;
+    }
+    .moments.visible{ opacity:1; transform:none }
+    .moments h3{ margin:0 0 12px 0 }
+    .moment-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)) }
+    .moment-slot{ background:#232323; border-radius:10px; padding:8px; text-align:center; color:var(--muted) }
+    .moment-slot img{ width:100%; border-radius:8px; height:120px; object-fit:cover; display:block; margin-bottom:8px }
+
+    footer{ color:var(--muted); text-align:center; padding:26px 8px; font-size:13px }
+
+    /* ===== Responsive tweaks ===== */
+    @media (max-width:900px){
+      .song{ width:48% }
+      .sidebar{ width:64px }
+      .sb-label{ display:none }
+      .hero h1{ font-size:36px }
+      .hero{ padding:80px 6% 60px 6% }
+    }
+    @media (max-width:560px){
+      .song{ width:100% }
+      .search{ width:100% }
+      .songs-grid{ gap:12px }
+      .hero{ padding:70px 5% 40px 5% }
+      .hero h1{ font-size:28px }
+      .moment-slot img{ height:100px }
+    }
+
+    /* atur font dan tampilan dasar */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #111; /* warna hitam tapi tidak terlalu pekat */
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Bagian judul di atas halaman */
+    .judul {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background: linear-gradient(180deg, #222, #111);
+    }
+
+    .judul h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .judul p {
+      color: #bbb;
+      font-size: 1em;
+    }
+
+   /* Container utama pesan */
+.pesan-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 40px 0;
+  background-color: #1c1c1c;
+  position: relative; /* penting agar clone bisa absolute di dalamnya */
+}
+
+/* Wrapper utama yang bergerak */
+.pesan-wrapper {
+  display: flex;
+  gap: 20px;
+  width: max-content; /* penting untuk animasi halus */
+  animation: infinite-scroll 200s linear infinite;
+}
+
+/* Clone hasil duplikat dari JS */
+.clone {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  display: flex;
+  gap: 20px;
+}
+
+/* Kotak pesan */
+.pesan {
+  background-color: #2b2b2b;
+  border-radius: 16px;
+  padding: 20px;
+  width: 500px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Isi teks pesan */
+.pesan p {
+  margin: 0;
+  font-size: 0.95em;
+  color: #eee;
+}
+
+/* Nama pengirim di bawah pesan */
+.nama {
+  margin-top: 2px;
+  font-size: 0.85em;
+  color: #999;
+  text-align: right;
+  width: 100%;
+}
+
+/* Animasi halus tanpa lompat */
+@keyframes infinite-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%); /* hanya setengah karena ada clone */
+  }
+}
+
+
+    /* Responsif untuk layar kecil (HP) */
+    @media (max-width: 600px) {
+      .pesan {
+        min-width: 180px;
+        padding: 15px;
+      }
+
+      .judul h1 {
+        font-size: 1.5em;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ========== HERO (page 1) ========== -->
+  <section class="hero" id="hero">
+    <div class="content" id="heroContent">
+      <h1>Happy Birthday Indiraa ❤️</h1>
+      <p>aaa nggaa kerasa yaa, harii ini kamu resmi sweet sixteen nyakk‼️
+selamat ulang tahun yaa, sayangg. makasii banyak udaa hadir dan selalu bikin hari hariku jadi jauh lebih berwarnaa. punya kamuu di hidupkuu itu beneran salah satu hal terbaik yang pernah adaa🫰💗
+di umur kamuu yang ke 16 ini, akuu cuma maw doain yang terbaik buat kamuu. semoga sehat selalu, makin bahagia, dimudahkan dalam semuaa hal yang lagi kamu perjuangkan, dan whishlist kamuu satu per satu bisa terwujud✨🌟.
+selaluu jadi pacar aku yang ceria, yang selalu punya senyum manis, dan yang selalu bisa bikin aku bangga yaa. ingat, apaa pun yang terjadi, kamu selalu punya akuu yang bakal siap mendukung dan ada buat kamuu💌💕.
+enjoy your special day, my honey bunny sweety‼️ semogaa harimuu penuh sama hal hal manis, kue yang enak, dan tawa yang gak habis habis. i lop yuuu banyak banyak sayangg💖💗💕🎂
+.</p>
+      <div class="controls">
+        <button class="btn" id="goToMusic">Play</button>
+        <button class="btn secondary" id="infoBtn">Info</button>
+      </div>
+    </div>
+
+    
+  </section>
+
+  <!-- ========== MUSIC SECTION (page 2) ========== -->
+  <section class="music-section" id="musicSection">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="sidebar">
+      <!-- top icons -->
+      <div class="sb-icon" title="Home" data-role="home" aria-hidden="true">
+        <!-- home SVG -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="sb-icon" title="Search" data-role="search" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="6" stroke-width="1.4"/><path d="M21 21l-4.3-4.3" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="sb-icon" title="Library" data-role="library" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="6" height="16" rx="1" stroke-width="1.4"/><rect x="15" y="4" width="6" height="10" rx="1" stroke-width="1.4"/></svg>
+      </div>
+
+      <!-- mini library with playable items -->
+      <div class="library" id="sidebarLibrary" aria-hidden="true">
+        <div class="lib-item" data-index="0">
+          <img src="https://i.scdn.co/image/ab67616d0000b2734011de7822423ed7557c3c81" alt="cover 1">
+          <small style="color:var(--muted); font-size:11px; margin-top:6px">ILYSB</small>
+        </div>
+        <div class="lib-item" data-index="1">
+          <img src="ppp.jpg" alt="cover 2">
+          <small style="color:var(--muted); font-size:11px; margin-top:6px">Takkan Berpaling Darimu - Instrumental</small>
+        </div>
+        <div class="lib-item" data-index="2">
+          <img src="https://i.scdn.co/image/ab67616d0000b27395688e1f59ae3fc4951d41ff" alt="cover 3">
+          <small style="color:var(--muted); font-size:11px; margin-top:6px">Terbuang Dalam Waktu</small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- tengah tengah -->
+    <main class="main" id="mainContent">
+      <div class="topbar">
+        <input class="search" placeholder="What do you want to play?" aria-label="search">
+        <div class="top-actions">
+          <div class="pill">🎂 Happy Birthday</div>
+          <div class="sb-icon" title="bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke-width="1.3"/></svg></div>
+          <div class="sb-icon" title="friends"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-3-3.87" stroke-width="1.3"/><path d="M7 21v-2a4 4 0 0 1 3-3.87" stroke-width="1.3"/><circle cx="12" cy="7" r="4" stroke-width="1.3"/></svg></div>
+          <div style="width:36px; height:36px; border-radius:50%; overflow:hidden"><img src="ppIG.jpg" style="width:100%;height:100%;object-fit:cover" alt="profile"></div>
+        </div>
+      </div>
+
+      <!-- songs / cards -->
+      <section class="songs-grid" id="songsGrid">
+        <article class="song" data-index="0">
+          <img src="https://i.scdn.co/image/ab67616d0000b2734011de7822423ed7557c3c81" alt="Tyalor Swift">
+          <h4>ILYSB</h4>
+          <small>LANY</small>
+          <div class="controls-row">
+            <button class="play-btn paused" data-action="toggle" data-index="0">▶</button>
+            <div class="progress"><i></i></div>
+          </div>
+        </article>
+
+        <article class="song" data-index="1">
+          <img src="ppp.jpg" alt="Apartement">
+          <h4>Takkan Berpaling Darimu - Instrumental</h4>
+          <small>Rossa</small>
+          <div class="controls-row">
+            <button class="play-btn paused" data-action="toggle" data-index="1">▶</button>
+            <div class="progress"><i></i></div>
+          </div>
+        </article>
+
+        <article class="song" data-index="2">
+          <img src="https://i.scdn.co/image/ab67616d0000b27395688e1f59ae3fc4951d41ff" alt="you!">
+          <h4>Terbuang Dalam Waktu</h4>
+          <small>Barasuara</small>
+          <div class="controls-row">
+            <button class="play-btn paused" data-action="toggle" data-index="2">▶</button>
+            <div class="progress"><i></i></div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Divider to moments (extra visual) -->
+      <div style="height:28px"></div>
+
+      <!-- Moments -->
+      <section class="moments" id="momentsSection">
+        <h3>Your special photos</h3>
+        <div class="moment-grid" id="momentGrid">
+          <div class="moment-slot"><img src="weh.jpeg" alt=""><div>💕🫠</div></div>
+          <div class="moment-slot"><img src="glass.jpeg" alt=""><div>With glasses😘😵‍💫</div></div>
+          <div class="moment-slot"><img src="bayikk.jpeg" alt=""><div>😋😝</div></div>
+          <div class="moment-slot"><img src="ble.jpeg" alt=""><div>Jamet ih melet melet😭😭</div></div>
+          <div class="moment-slot"><img src="ndo.jpeg" alt=""><div>💖✨</div></div>
+          <div class="moment-slot"><img src="mekap.jpeg" alt=""><div>look at that😖</div></div>
+        </div>
+      </section>
+
+      <footer>Made with ❤️</footer>
+    </main>
+  </section>
+
+  <!-- Bagian Judul -->
+  <section class="judul">
+    <h1>Poetry for Indira🌹</h1>
+    <p>from palpale</p>
+  </section>
+
+  <!-- Bagian Pesan Berjalan -->
+  <section class="pesan-container">
+      
+  </div>
+    <div class="pesan-wrapper" id="pesanWrapper">
+      <!-- Elemen pesan akan dimasukkan otomatis lewat JavaScript -->
+    </div>
+  </section>
+
+
+  <script>
+    /* ------------- audio objects ------------- */
+    const tracks = [
+      {src:'lan.mpeg', title:'Taylor Swift'},
+      {src:'lv.mp3.mpeg', title:'Apartement'},
+      {src:'tb.mpeg', title:'Barasuara'}
+    ];
+    const audioEls = tracks.map(t => {
+      const a = new Audio();
+      a.src = t.src;
+      a.preload = 'metadata';
+      return a;
+    });
+
+    // helpers
+    function pauseAll(exceptIndex=null){
+      audioEls.forEach((a,i)=>{ if(i!==exceptIndex){ a.pause() }});
+      // update UI
+      document.querySelectorAll('.play-btn').forEach(btn=>{
+        const idx = Number(btn.dataset.index);
+        if(idx !== exceptIndex) btn.classList.add('paused'), btn.textContent='▶';
+      });
+    }
+
+    // connect sidebar mini items to play
+    document.querySelectorAll('.lib-item').forEach(el=>{
+      el.addEventListener('click', e=>{
+        const idx = Number(el.dataset.index);
+        togglePlay(idx);
+      });
+    });
+
+    // connect main play buttons
+    document.querySelectorAll('.play-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const idx = Number(btn.dataset.index);
+        togglePlay(idx);
+      });
+    });
+
+    // sidebar mini clickable: data-index already set on lib-item
+    // but some browsers may not like autoplay so we programmatically toggle play/pause
+    function togglePlay(index){
+      const audio = audioEls[index];
+      if(audio.paused){
+        // pause others
+        pauseAll(index);
+        audio.play().catch(()=>{/* autoplay blocked */});
+        // mark UI active
+        document.querySelectorAll('.play-btn').forEach(b=>{
+          const i = Number(b.dataset.index);
+          if(i===index){ b.classList.remove('paused'); b.textContent='❚❚' } else { b.classList.add('paused'); b.textContent='▶' }
+        });
+        // also update sidebar lib visual (brief highlight)
+        document.querySelectorAll('.lib-item').forEach(li=> li.style.boxShadow='none');
+        const activeLib = document.querySelector(`.lib-item[data-index="${index}"]`);
+        if(activeLib) activeLib.style.boxShadow='0 6px 18px rgba(30,215,96,0.12)';
+      } else {
+        audio.pause();
+        document.querySelectorAll('.play-btn').forEach(b=>{
+          if(Number(b.dataset.index)===index){ b.classList.add('paused'); b.textContent='▶' }
+        });
+      }
+    }
+
+    // update progress bars
+    audioEls.forEach((audio, idx)=>{
+      const songCard = document.querySelector(`.song[data-index="${idx}"]`);
+      const prog = songCard?.querySelector('.progress > i');
+      audio.addEventListener('timeupdate', ()=>{
+        if(!prog) return;
+        const pct = (audio.currentTime / (audio.duration || 1)) * 100;
+        prog.style.width = pct + '%';
+      });
+      audio.addEventListener('ended', ()=>{
+        // reset UI
+        document.querySelectorAll('.play-btn').forEach(b=>{
+          if(Number(b.dataset.index)===idx){ b.classList.add('paused'); b.textContent='▶' }
+        });
+      });
+    });
+
+    /* ------------- Pause others when any starts playing (just in case) ------------- */
+    audioEls.forEach((a, i)=>{
+      a.addEventListener('play', ()=>{
+        audioEls.forEach((o,j)=>{ if(j!==i) o.pause(); });
+      });
+    });
+
+    /* ------------- Fade-in using IntersectionObserver ------------- */
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('visible');
+        }
+      });
+    }, {threshold:0.12});
+
+    io.observe(document.getElementById('heroContent'));
+    io.observe(document.getElementById('mainContent'));
+    io.observe(document.getElementById('momentsSection'));
+
+    /* ------------- Divider flip on scroll direction ------------- */
+    const dividerSvg = document.querySelector('.divider-svg');
+    let lastScroll = window.scrollY;
+    let ticking = false;
+
+    function onScroll(){
+      if(!ticking){
+        window.requestAnimationFrame(()=>{
+          const current = window.scrollY;
+          const down = current > lastScroll;
+          // when scrolling down => shape should look like a hill (curve up) => keep normal
+          // when scrolling up => invert (scaleY(-1)) to look like valley
+          if(down){
+            dividerSvg.style.transform = 'scaleY(1)';
+          } else {
+            dividerSvg.style.transform = 'scaleY(-1)';
+          }
+          lastScroll = current <= 0 ? 0 : current;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+
+    // button "Play" on hero scrolls to music section
+    document.getElementById('goToMusic').addEventListener('click', ()=>{
+      document.getElementById('musicSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    // small optimization: stop all audio on page hide
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.hidden) pauseAll();
+    });
+
+    /* ===== Make UI responsive on fast scroll: ensure main fades in quickly ===== */
+    // when user reaches music section, make main visible
+    const musicSection = document.getElementById('musicSection');
+    const io2 = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          document.getElementById('mainContent').classList.add('visible');
+          document.getElementById('momentsSection').classList.add('visible');
+        }
+      });
+    }, {threshold:0.2});
+    io2.observe(musicSection);
+
+    /* Accessibility: keyboard play via number keys 1-3 */
+    window.addEventListener('keydown', (e)=>{
+      if(e.key==='1') togglePlay(0);
+      if(e.key==='2') togglePlay(1);
+      if(e.key==='3') togglePlay(2);
+    });
+
+
+// pesan & nama pengirim
+const pesanGabung = [
+  { pengirim: "", isi: "Kelak, saat ingatan fanaku mulai dikebiri masa dan pundak kokoh ini merunduk rapuh disapa senja usia, tataplah mataku. Jantungku takkan pernah lupa cara berdegup untuk namamu, hingga malaikat maut menjemputku dengan senyum paling megah karena tahu telah berhasil memuliakanmu hingga lembar terakhir" },
+  { pengirim: "", isi: "Bagai dua sungai yang bermuara pada samudra yang sama, takdir menuntun langkah kita pada satu titik yang telah lama disiapkan semesta. tiada kebetulan dalam pertemuan ini, sebab jiwa yang sejati tak akan pernah tersesat, ia hanya menunggu waktu untuk kembali pada rumahnya" },
+  { pengirim: "", isi: "Aku yang terbiasa mengunci diri di balik tembok pembatas, mendadak kehilangan arah saat kau masuk tanpa mengetuk, lucu bagaimana caramu memporak-porandakan duniaku yang rapi, membuatku terpaksa mengaku kalah pada kenyamanan yang tak pernah kurencanakan" },
+  { pengirim: "", isi: "Engkau adalah mahakarya semesta, tempat setiap binar matamu mencuri keindahan bintang. Menatap paras ayumu membuat senja cemburu, sebab cantiknya dirimu tak pernah pudar oleh waktu. Bisakah kau berhenti begitu memikat? Karena hatiku terus kehabisan napas menampung rasa kagum yang tak bertepi." },
+  { pengirim: "", isi: "Menjelaskanmu adalah cara terbaik untuk membuat bahasa kehilangan fungsi. Kau terlalu luas untuk disempitkan sebuah arti, dan terlalu indah untuk sekadar dieja. Aksara menyerah di hadapanmu, sebab kalah mutlak oleh serpihan surga paling manis yang berpendar indah di ujung bibirmu" },
+  { pengirim: "", isi: "Bahkan jika seluruh dunia meredup dan waktu kehilangan bicaranya, jiwaku akan tetap menemukan jalan pulang ke matamu sebab di sana, Tuhan telah menuliskan akhir dari segala petualanganku, sebuah rumah abadi yang dibangun dari kelembutan senyummu" },
+  { pengirim: "", isi: "Ketika seluruh semesta meluruh menjadi abu dan sejarah manusia selesai ditulis, namamu adalah satu-satunya firman yang tersisa di rongga langit, aku telah menukar keabadian surga demi sedetik dekapmu, sebab bagiku, runtuhnya dunia tak lagi bermakna sejak seluruh takdirku telah habis kuserahkan di bawah kakimu" },
+  { pengirim: "", isi: "Suatu hari, saat badai entropi menghapus jejak kita dari bumi, senyumanmu akan tetap tinggal di ujung napas bumi yang menunggu meledak. menjadi tanda yang tak terbantahkan bagi alam semesta, bahwa di antara miliaran bintang, pernah ada seorang anak manusia semanis dirimu; sosok yang membuatku jatuh hati sedalam ini, bahkan jauh sebelum takdir dimulai" },
+
+];
+
+// ambil elemen wrapper dari HTML
+const wrapper = document.getElementById("pesanWrapper");
+
+// tambahkan setiap pesan ke wrapper
+pesanGabung.forEach((item) => {
+  const div = document.createElement("div");
+  div.classList.add("pesan");
+  div.innerHTML = `<p>"${item.isi}"</p><div class="nama"> ${item.pengirim}</div>`;
+  wrapper.appendChild(div);
+});
+
+// gandakan isi supaya animasi infinite tanpa lompat
+wrapper.innerHTML += wrapper.innerHTML;
+
+const pesan = document.querySelector(".pesanGabung").cloneNode(true);
+document.querySelector('.pesanGabung-container').appendChild(pesanGabung);
+
+// Tambahkan setiap pesan ke dalam wrapper
+pesanGabung.forEach((item) => {
+  const div = document.createElement("div");
+  div.classList.add("pesan");
+  div.innerHTML = `<p>"${item.isi}"</p><div class="nama"> ${item.pengirim}</div>`;
+  wrapper.appendChild(div);
+});
+
+// ✅ Gandakan isi wrapper biar animasi halus tanpa lompat
+const clone = wrapper.cloneNode(true);
+wrapper.parentElement.appendChild(clone);
+clone.classList.add("clone");
+
+
+  </script>
+</body>
+</html>
